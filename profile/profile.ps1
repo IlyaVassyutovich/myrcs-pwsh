@@ -32,7 +32,7 @@ Write-Debug "Setup Mindbox env | done"
 Initialize-Module `
 	-Name "pwsh-start-process" `
 	-RequiredVersion "0.1.0" -Prerelease $true `
-	-Repository "agamemnon"
+	-Repository "agamemnon.ivh"
 
 function Exit-CurrentSession { exit }
 New-Alias $([char]4) Exit-CurrentSession
