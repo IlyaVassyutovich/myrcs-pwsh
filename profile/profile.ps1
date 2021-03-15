@@ -9,7 +9,7 @@ $LastExitCodeBackup = $LASTEXITCODE
 
 $ModuleRepository = "agamemnon.ivh"
 
-Initialize-Module `
+Initialize-ModuleCached `
 	-Name "pwsh-start-process" `
 	-RequiredVersion "0.1.0" -Prerelease $true `
 	-Repository $ModuleRepository
@@ -19,7 +19,7 @@ Write-Debug "Setup Mindbox env | check env"
 $IsMindboxWorkStation = ${ENV:mindbox/isMindboxWorkStation}
 Write-Debug "Setup Mindbox env | $IsMindboxWorkStation"
 if ($IsMindboxWorkStation -eq $True) {
-	Initialize-Module `
+	Initialize-ModuleCached `
 		-Name "myrcs-mindbox" `
 		-RequiredVersion "0.2.2" `
 		-Prerelease $False `
