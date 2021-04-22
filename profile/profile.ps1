@@ -21,7 +21,7 @@ Write-Debug "Setup Mindbox env | $IsMindboxWorkStation"
 if ($IsMindboxWorkStation -eq $True) {
 	Initialize-ModuleCached `
 		-Name "myrcs-mindbox" `
-		-RequiredVersion "0.2.2" `
+		-RequiredVersion "1.0.0" `
 		-Prerelease $False `
 		-Repository $ModuleRepository
 }
