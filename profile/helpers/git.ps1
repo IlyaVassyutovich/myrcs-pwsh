@@ -1,3 +1,16 @@
+Write-Debug "Trying to setup alias for `"gitextensions`""
+$ErrorVariable = $null
+$GitExCommand = Get-Command "gitex" `
+	-ErrorVariable ErrorVariable `
+	-ErrorAction Continue
+if ($null -eq $ErrorVariable -or 0 -eq $ErrorVariable.Count) {
+	function private:Start-GitExtensions {
+		& $GitExCommand.Source "browse"
+	}
+	New-Alias "ge" Start-GitExtensions
+	Write-Debug "Alias for `"gitextesions`" set up"
+}
+
 # TODO: Rework to better determine default branch from origin
 # Maybe use some configuration file, like with .git/github.json?
 function Get-DefaultBranch {
