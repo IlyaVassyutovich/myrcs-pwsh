@@ -69,3 +69,4 @@ function Merge-WithDefaultBranch {
 
 	git merge --edit --no-ff $CurrentBranch
 }
+New-Alias "mwd" "Merge-WithDefaultBranch"
