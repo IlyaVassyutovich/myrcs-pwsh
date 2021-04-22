@@ -28,6 +28,24 @@ function Get-DefaultBranch {
 	return $DefaultBranch
 }
 
+function Rebase-CurrentBranchOntoDefault {
+	Write-Debug "Rebasing onto..."
+	
+	$CurrentBranch = git branch --show-current
+	Write-Debug "Current branch is `"$CurrentBranch`""
+
+	$DefaultBranch = Get-DefaultBranch
+	Write-Debug "Default branch is `"$DefaultBranch`""
+
+	$MergeBase = git merge-base $CurrentBranch $DefaultBranch
+	Write-Debug "Merge base is `"$MergeBase`""
+
+	git rebase `
+		--onto $DefaultBranch `
+		$MergeBase `
+		$CurrentBranch
+}
+
 function Merge-WithDefaultBranch {
 	Write-Debug "Determining git status"
 	$GitStatus = Get-GitStatus -Force
