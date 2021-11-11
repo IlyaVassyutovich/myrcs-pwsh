@@ -34,7 +34,7 @@ function Initialize-ModuleCached ([string]$Name, [string]$RequiredVersion, [bool
 	if (-not (Test-Path $ExpectedCacheMarkerFullname)) {
 		Write-Debug "Initialize $Name | cache marker not found"
 		Install-ModuleCore $Name $RequiredVersion $Prerelease $Repository
-		New-Item $ExpectedCacheDir -ItemType Directory | Out-Null
+		New-Item $ExpectedCacheDir -ItemType Directory -Force | Out-Null
 		New-Item $ExpectedCacheMarkerFullname -ItemType File | Out-Null
 		Write-Output "" | Out-File $ExpectedCacheMarkerFullname
 	}
