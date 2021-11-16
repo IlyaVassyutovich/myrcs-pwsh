@@ -11,7 +11,8 @@ $ModuleRepository = "agamemnon.ivh"
 
 Initialize-ModuleCached `
 	-Name "pwsh-start-process" `
-	-RequiredVersion "0.1.0" -Prerelease $true `
+	-RequiredVersion "0.1.0" `
+	-Prerelease "pre" `
 	-Repository $ModuleRepository
 
 
@@ -22,7 +23,6 @@ if ($IsMindboxWorkStation -eq $True) {
 	Initialize-ModuleCached `
 		-Name "myrcs-mindbox" `
 		-RequiredVersion "1.1.1" `
-		-Prerelease $False `
 		-Repository $ModuleRepository
 }
 Write-Debug "Setup Mindbox env | done"

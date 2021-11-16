@@ -1,10 +1,22 @@
-function Install-ModuleCore ([string]$Name, [string]$RequiredVersion, [bool]$Prerelease, [string]$Repository) {
-	$EffectiveRequiredVersion = $Prerelease ? "${RequiredVersion}-pre" : "$RequiredVersion"
-	Write-Debug "Install $Name | check installed version ($EffectiveRequiredVersion, $Repository)"
+<#
+Get-InstalledModule `
+	-ModuleName PSReadLine `
+	-RequiredVersion "2.2.0-beta4" `
+	-AllowPrerelease
+
+Install-Module `
+	-ModuleName PSReadLine `
+	-RequiredVersion "2.2.0-beta4" `
+	-AllowPrerelease
+#>
+
+
+function Install-ModuleCore ([string]$Name, [string]$RequiredVersion, [string]$Prerelease, [string]$Repository) {
+	Write-Debug "Install $Name | check installed version ($RequiredVersion, $Repository)"
 	$Params = @{
 		Name = $Name
-		RequiredVersion = $EffectiveRequiredVersion
-		AllowPrerelease = $Prerelease
+		RequiredVersion = $RequiredVersion
+		AllowPrerelease = ($null -ne $Prerelease)
 	}
 	$InstalledModule = Get-InstalledModule @Params -ErrorAction SilentlyContinue
 	if ($null -eq $InstalledModule) {
@@ -18,22 +30,18 @@ function Install-ModuleCore ([string]$Name, [string]$RequiredVersion, [bool]$Pre
 	Write-Debug "Install $Name | ok"
 }
 
-function Initialize-Module ([string]$Name, [string]$RequiredVersion, [bool]$Prerelease, [string]$Repository) {
-	Install-ModuleCore $Name $RequiredVersion $Prerelease $Repository
-
-	Write-Debug "Initialize $Name | importing module"
-	Import-Module -FullyQualifiedName @{ModuleName = $Name; ModuleVersion = $RequiredVersion}
-	Write-Debug "Initialize $Name | done"
-}
-
-function Initialize-ModuleCached ([string]$Name, [string]$RequiredVersion, [bool]$Prerelease, [string]$Repository) {
+function Initialize-ModuleCached ([string]$Name, [string]$RequiredVersion, [string]$Prerelease, [string]$Repository) {
 	Write-Debug "Initialize $Name | verify cache"
+
+	$FullModuleVersion = "$RequiredVersion-$Prerelease".TrimEnd("-")
+	Write-Debug "Initialize $Name | full version is `"$FullModuleVersion`""
+
 	$ExpectedCacheDir = Join-Path $ENV:TEMP "__pwsh-module-init-cache" "$Name@$Repository"
-	$ExpectedCacheMarkerFilename = "$($Prerelease ? "${RequiredVersion}-pre" : "$RequiredVersion").marker"
+	$ExpectedCacheMarkerFilename = "$FullModuleVersion.marker"
 	$ExpectedCacheMarkerFullname = Join-Path $ExpectedCacheDir $ExpectedCacheMarkerFilename
 	if (-not (Test-Path $ExpectedCacheMarkerFullname)) {
 		Write-Debug "Initialize $Name | cache marker not found"
-		Install-ModuleCore $Name $RequiredVersion $Prerelease $Repository
+		Install-ModuleCore $Name $FullModuleVersion $Prerelease $Repository
 		New-Item $ExpectedCacheDir -ItemType Directory -Force | Out-Null
 		New-Item $ExpectedCacheMarkerFullname -ItemType File | Out-Null
 		Write-Output "" | Out-File $ExpectedCacheMarkerFullname
@@ -47,7 +55,7 @@ function Initialize-ModuleCached ([string]$Name, [string]$RequiredVersion, [bool
 		}
 		else {
 			Write-Debug "Initialize $Name | cache marker is stale"
-			Install-ModuleCore $Name $RequiredVersion $Prerelease $Repository
+			Install-ModuleCore $Name $FullModuleVersion $Prerelease $Repository
 			Write-Output "" | Out-File $ExpectedCacheMarkerFullname
 		}
 	}
