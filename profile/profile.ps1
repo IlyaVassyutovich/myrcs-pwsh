@@ -28,8 +28,7 @@ if ($IsMindboxWorkStation -eq $True) {
 Write-Debug "Setup Mindbox env | done"
 
 . (Join-Path $PSScriptRoot psreadline.ps1)
+. (Join-Path $PSScriptRoot posh-git.ps1)
 
-Import-Module posh-git
-$GitPromptSettings.PathStatusSeparator = [string]::Empty
 
 $global:LASTEXITCODE = $LastExitCodeBackup
