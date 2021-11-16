@@ -27,9 +27,7 @@ if ($IsMindboxWorkStation -eq $True) {
 }
 Write-Debug "Setup Mindbox env | done"
 
-
-function Exit-CurrentSession { exit }
-New-Alias $([char]4) Exit-CurrentSession
+. (Join-Path $PSScriptRoot psreadline.ps1)
 
 Import-Module posh-git
 $GitPromptSettings.PathStatusSeparator = [string]::Empty
