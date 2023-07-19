@@ -19,10 +19,12 @@ function Get-DefaultBranch {
 		| Where-Object { $_ -eq "master" -or $_ -eq "main" }
 	
 	Write-Debug "Got $($DefaultBranchCandidates.Count) candidate[-s]"
-	if ($DefaultBranchCandidates.Count -ne 1) {
-		throw "Unable to determine default branch."
+	Switch ($DefaultBranchCandidates.Count) {
+		2	{ $DefaultBranch = "main" }
+		1	{ $DefaultBranch = $DefaultBranchCandidates }
+		Default { throw "Unable to determine default branch." }
 	}
-	$DefaultBranch = $DefaultBranchCandidates
+
 	Write-Debug "Selected `"$DefaultBranch`" as default"
 
 	return $DefaultBranch
