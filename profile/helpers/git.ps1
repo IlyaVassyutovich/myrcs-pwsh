@@ -2,13 +2,17 @@ Write-Debug "Trying to setup alias for `"gitextensions`""
 $ErrorVariable = $null
 $GitExCommand = Get-Command "gitex" `
 	-ErrorVariable ErrorVariable `
-	-ErrorAction Continue
+	-ErrorAction SilentlyContinue
 if ($null -eq $ErrorVariable -or 0 -eq $ErrorVariable.Count) {
 	function private:Start-GitExtensions {
 		& $GitExCommand.Source "browse"
 	}
 	New-Alias "ge" Start-GitExtensions
 	Write-Debug "Alias for `"gitextesions`" set up"
+}
+else {
+	Write-Warning "GitExtensions not found, alias not set"
+	$ErrorVariable = $null
 }
 
 # TODO: Rework to better determine default branch from origin
