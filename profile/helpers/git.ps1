@@ -48,7 +48,25 @@ function Rebase-CurrentBranchOntoDefault {
 		$CurrentBranch
 }
 
+function Get-PullRequestRefForMergeCommit ([String] $PullRequestFullUri) {
+	$GithubPRUriPattern = "^https:\/\/github\.com\/" + "(?<org>[a-zA-Z0-9-_]+)\/" + "(?<repo>[a-zA-Z0-9-_]+)\/" + "pull\/" + "(?<prid>\d+)\/?\??$"
+
+	$Match = $PullRequestFullUri -match $GithubPRUriPattern
+	if (-not $Match) {
+		throw "Failed to match uri."
+	}
+	
+	return $Matches.org + "/" + $Matches.repo + "#" + $Matches.prid
+}
+
 function Merge-WithDefaultBranch {
+	[CmdletBinding()]
+	param (
+		[Parameter()]
+		[String]
+		$PullRequestFullUri
+	)
+
 	Write-Debug "Determining git status"
 	$GitStatus = Get-GitStatus -Force
 	if ($null -eq $GitStatus) {
@@ -69,6 +87,11 @@ function Merge-WithDefaultBranch {
 
 	git checkout $DefautlBranch
 
-	git merge --edit --no-ff $CurrentBranch
+	if ($null -ne $PullRequestFullUri) {
+		git merge --no-ff --message "Merge $(Get-PullRequestRefForMergeCommit $PullRequestFullUri)" $CurrentBranch
+	}
+	else {
+		git merge --edit --no-ff $CurrentBranch
+	}
 }
 New-Alias "mwd" "Merge-WithDefaultBranch"
