@@ -53,7 +53,7 @@ function Rebase-CurrentBranchOntoDefault {
 }
 
 function Get-PullRequestRefForMergeCommit ([String] $PullRequestFullUri) {
-	$GithubPRUriPattern = "^https:\/\/github\.com\/" + "(?<org>[a-zA-Z0-9-_]+)\/" + "(?<repo>[a-zA-Z0-9-_]+)\/" + "pull\/" + "(?<prid>\d+)\/?\??$"
+	$GithubPRUriPattern = "^https:\/\/github\.com\/" + "(?<org>[a-zA-Z0-9-_]+)\/" + "(?<repo>[a-zA-Z0-9-_\.]+)\/" + "pull\/" + "(?<prid>\d+)\/?\??$"
 
 	$Match = $PullRequestFullUri -match $GithubPRUriPattern
 	if (-not $Match) {
